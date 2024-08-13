@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAC Address Management</title>
+    <script>
+        async function blockHost() {
+            const mac = document.getElementById('blockMac').value;
+            const response = await fetch('/block_mac', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mac: mac })
+            });
+            const result = await response.json();
+            alert(result.status === 'success' ? `Blocked MAC: ${mac}` : result.message);
+        }
+
+        async function unblockHost() {
+            const mac = document.getElementById('unblockMac').value;
+            const response = await fetch('/unblock_mac', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mac: mac })
+            });
+            const result = await response.json();
+            alert(result.status === 'success' ? `Unblocked MAC: ${mac}` : result.message);
+        }
+
+        async function listBlockedHosts() {
+            const response = await fetch('/blocked_macs');
+            const result = await response.json();
+            const list = document.getElementById('blockedList');
+            list.innerHTML = result.blocked_macs.join('<br>');
+        }
+    </script>
+</head>
+<body>
+    <h1>MAC Address Management</h1>
+    <div>
+        <h2>Block MAC Address</h2>
+        <input type="text" id="blockMac" placeholder="MAC address to block">
+        <button onclick="blockHost()">Block</button>
+    </div>
+    <div>
+        <h2>Unblock MAC Address</h2>
+        <input type="text" id="unblockMac" placeholder="MAC address to unblock">
+        <button onclick="unblockHost()">Unblock</button>
+    </div>
+    <div>
+        <h2>Blocked MAC Addresses</h2>
+        <button onclick="listBlockedHosts()">List Blocked MAC Addresses</button>
+        <div id="blockedList"></div>
+    </div>
+</body>
+</html>
+

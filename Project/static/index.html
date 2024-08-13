@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDN Host Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">SDN Host Management</h1>
+
+        <!-- Main Menu -->
+        <div class="list-group">
+            <a href="/mac_management" class="list-group-item list-group-item-action">
+                <h4 class="mb-1">Manage MAC Addresses</h4>
+                <p class="mb-1">Block, unblock, and list MAC addresses.</p>
+            </a>
+            <a href="/ip_management" class="list-group-item list-group-item-action">
+                <h4 class="mb-1">Manage IP Addresses</h4>
+                <p class="mb-1">Block, unblock, and list IP addresses.</p>
+            </a>
+            <a href="/csv_upload" class="list-group-item list-group-item-action">
+                <h4 class="mb-1">Upload CSV</h4>
+                <p class="mb-1">Upload a CSV file to block connections between specified IPs.</p>
+            </a>
+            <a href="/flow_tables_page" class="list-group-item list-group-item-action">Flow tables</a>
+            <a href="/performance_page" class="list-group-item list-group-item-action">Machine Performance</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

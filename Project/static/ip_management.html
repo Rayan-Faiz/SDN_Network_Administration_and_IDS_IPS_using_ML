@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Address Management</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">IP Address Management</h1>
+
+        <!-- Block IP Address -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Block IP Address</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="blockIP" class="form-control" placeholder="IP address to block">
+                    <div class="input-group-append">
+                        <button class="btn btn-danger" onclick="blockIP()">Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unblock IP Address -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Unblock IP Address</h5>
+            </div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="unblockIP" class="form-control" placeholder="IP address to unblock">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" onclick="unblockIP()">Unblock</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Blocked IP Addresses -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Blocked IP Addresses</h5>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary mb-3" onclick="listBlockedIPs()">List Blocked IP Addresses</button>
+                <div id="blockedIPList" class="border p-3" style="height: 200px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        async function blockIP() {
+            const ip = document.getElementById('blockIP').value;
+            const response = await fetch('/block_ip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: ip })
+            });
+            const result = await response.json();
+            alert(result.status === 'success' ? `Blocked IP: ${ip}` : result.message);
+        }
+
+        async function unblockIP() {
+            const ip = document.getElementById('unblockIP').value;
+            const response = await fetch('/unblock_ip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ip: ip })
+            });
+            const result = await response.json();
+            alert(result.status === 'success' ? `Unblocked IP: ${ip}` : result.message);
+        }
+
+        async function listBlockedIPs() {
+            const response = await fetch('/blocked_ips');
+            const result = await response.json();
+            const list = document.getElementById('blockedIPList');
+            list.innerHTML = result.blocked_ips.join('<br>');
+        }
+    </script>
+</body>
+</html>
+
