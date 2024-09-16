@@ -8,31 +8,35 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="mt-5">Flow Tables</h1>
+        <h1 class="mt-5 mb-4 text-center">Flow Tables</h1>
         {% for dpid, flows in flow_data.items() %}
-            <h2>Switch ID: {{ dpid }}</h2>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Priority</th>
-                        <th>Match</th>
-                        <th>Actions</th>
-                        <th>Packet Count</th>
-                        <th>Byte Count</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for flow in flows %}
-                    <tr>
-                        <td>{{ flow.priority }}</td>
-                        <td>{{ flow.match }}</td>
-                        <td>{{ flow.actions }}</td>
-                        <td>{{ flow.packet_count }}</td>
-                        <td>{{ flow.byte_count }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="mb-5">
+                <h2 class="mb-3">Switch ID: {{ dpid }}</h2>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Priority</th>
+                                <th>Match</th>
+                                <th>Actions</th>
+                                <th>Packet Count</th>
+                                <th>Byte Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flow in flows %}
+                            <tr>
+                                <td>{{ flow.priority }}</td>
+                                <td>{{ flow.match }}</td>
+                                <td>{{ flow.actions }}</td>
+                                <td>{{ flow.packet_count }}</td>
+                                <td>{{ flow.byte_count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         {% endfor %}
     </div>
 </body>

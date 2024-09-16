@@ -23,20 +23,50 @@
     </script>
 </head>
 <body onload="fetchPerformanceData()">
-    <div class="container">
-        <h1 class="mt-5">Machine Performance</h1>
-        <div class="mt-4">
-            <h4>CPU Usage:</h4>
-            <p id="cpuUsage">Loading...</p>
-            <h4>Memory Usage:</h4>
-            <p>Total: <span id="memoryTotal">Loading...</span></p>
-            <p>Used: <span id="memoryUsed">Loading...</span></p>
-            <p>Free: <span id="memoryFree">Loading...</span></p>
-            <h4>Disk Usage:</h4>
-            <p>Total: <span id="diskTotal">Loading...</span></p>
-            <p>Used: <span id="diskUsed">Loading...</span></p>
-            <p>Free: <span id="diskFree">Loading...</span></p>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Machine Performance</h1>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>CPU Usage</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <p id="cpuUsage" class="display-4">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>Memory Usage</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Total:</strong> <span id="memoryTotal">Loading...</span></p>
+                        <p><strong>Used:</strong> <span id="memoryUsed">Loading...</span></p>
+                        <p><strong>Free:</strong> <span id="memoryFree">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h4>Disk Usage</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Total:</strong> <span id="diskTotal">Loading...</span></p>
+                        <p><strong>Used:</strong> <span id="diskUsed">Loading...</span></p>
+                        <p><strong>Free:</strong> <span id="diskFree">Loading...</span></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
 </body>
 </html>

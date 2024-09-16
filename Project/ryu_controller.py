@@ -7,11 +7,14 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib.packet import ipv4
+from ryu.topology import event
+from ryu.topology.api import get_switch, get_link
 from flask import Flask, jsonify, request, send_from_directory
 import psutil
 import threading
 import csv
 import time
+import json
 from io import StringIO
 
 class SimpleSwitch13(app_manager.RyuApp):
@@ -23,14 +26,12 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.blocked_macs = set()
         self.blocked_ips = set()
         self.datapaths = {}
+        self.switches = {}
+        self.hosts = {}
+        self.links = []
 
         # Start Flask API in a separate thread
         self.app = Flask(__name__, static_folder='static')
-        '''self.app.add_url_rule('/', 'index', self.serve_index)
-        self.app.add_url_rule('/mac_management', 'mac_management', self.serve_mac_management)
-        self.app.add_url_rule('/ip_management', 'ip_management', self.serve_ip_management)
-        self.app.add_url_rule('/csv_upload', 'csv_upload', self.serve_csv_upload)'''
-
         
         self.app.add_url_rule('/block_mac', 'block_mac', self.block_host, methods=['POST'])
         self.app.add_url_rule('/unblock_mac', 'unblock_mac', self.unblock_host, methods=['POST'])
@@ -43,18 +44,6 @@ class SimpleSwitch13(app_manager.RyuApp):
         self.app.add_url_rule('/performance', 'performance', self.get_performance, methods=['GET'])
 
         threading.Thread(target=self.app.run, kwargs={'host': '0.0.0.0', 'port': 5000}).start()
-    
-    '''def serve_index(self):
-        return send_from_directory(self.app.static_folder, 'index.html')
-
-    def serve_mac_management(self):
-        return send_from_directory(self.app.static_folder, 'mac_management.html')
-
-    def serve_ip_management(self):
-        return send_from_directory(self.app.static_folder, 'ip_management.html')
-
-    def serve_csv_upload(self):
-        return send_from_directory(self.app.static_folder, 'csv_upload.html')'''
 
     def get_performance(self):
         cpu_usage = psutil.cpu_percent(interval=1)
@@ -70,7 +59,6 @@ class SimpleSwitch13(app_manager.RyuApp):
             'disk_used': disk_info.used,
             'disk_free': disk_info.free
         }
-        
         return jsonify(performance_data)
 
     def block_host(self):
@@ -359,10 +347,9 @@ class SimpleSwitch13(app_manager.RyuApp):
             protocol = row.get('Protocol')
             label = row.get('Label')
 
-            if label == '1':
-                # Block communication
-                for datapath in self.datapaths.values():
-                    self.block_communication(datapath, src_ip, dst_ip, src_port, dst_port, protocol)
+            # Block communication
+            for datapath in self.datapaths.values():
+                self.block_communication(datapath, src_ip, dst_ip, src_port, dst_port, protocol)
 
     def block_communication(self, datapath, src_ip, dst_ip, src_port, dst_port, protocol):
         ofproto = datapath.ofproto
@@ -371,17 +358,40 @@ class SimpleSwitch13(app_manager.RyuApp):
 
         # Build the match object
         match_fields = {}
-        if src_ip:
-            match_fields['ipv4_src'] = src_ip
-        if dst_ip:
-            match_fields['ipv4_dst'] = dst_ip
-        if src_port and protocol == '6':
-            match_fields['tcp_src'] = int(src_port)
-        if dst_port and protocol == '6': 
-            match_fields['tcp_dst'] = int(dst_port)
-        if protocol:
-            match_fields['ip_proto'] = int(protocol)
 
+        if protocol == '0':
+            # When protocol is 0, match only on source and destination IP
+            if src_ip:
+                match_fields['ipv4_src'] = src_ip
+            if dst_ip:
+                match_fields['ipv4_dst'] = dst_ip
+        else:
+            # For other protocols, include protocol-specific fields
+            if src_ip:
+                match_fields['ipv4_src'] = src_ip
+            if dst_ip:
+                match_fields['ipv4_dst'] = dst_ip
+            if protocol:
+                ip_proto = int(protocol)
+                match_fields['ip_proto'] = ip_proto
+
+                if ip_proto == 6:  # TCP
+                    if src_port:
+                        match_fields['tcp_src'] = int(src_port)
+                    if dst_port:
+                        match_fields['tcp_dst'] = int(dst_port)
+                elif ip_proto == 17:  # UDP
+                    if src_port:
+                        match_fields['udp_src'] = int(src_port)
+                    if dst_port:
+                        match_fields['udp_dst'] = int(dst_port)
+                elif ip_proto == 1:  # ICMP
+                    if src_port:  # ICMP type
+                        match_fields['icmp_type'] = int(src_port)
+                    if dst_port:  # ICMP code
+                        match_fields['icmp_code'] = int(dst_port)
+
+        # Ensure eth_type is set for IPv4
         match = parser.OFPMatch(**match_fields, eth_type=ether_types.ETH_TYPE_IP)
 
         self.add_flow(datapath, 100, match, actions)

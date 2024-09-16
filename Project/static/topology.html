@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network Topology</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        svg {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <h2>Network Topology</h2>
+    <svg width="800" height="600"></svg>
+
+    <script>
+        const width = 800;
+        const height = 600;
+
+        const svg = d3.select("svg");
+        const g = svg.append("g");
+
+        d3.json("/topology").then(data => {
+            const nodes = data.switches.map(s => ({ id: s, type: 'switch' }))
+                .concat(data.hosts.map(h => ({ id: h, type: 'host' })));
+            const links = data.links.map(l => ({ source: l[0], target: l[1] }));
+
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id))
+                .force("charge", d3.forceManyBody().strength(-400))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            const link = g.append("g")
+                .selectAll("line")
+                .data(links)
+                .enter().append("line")
+                .attr("stroke-width", 2);
+
+            const node = g.append("g")
+                .selectAll("circle")
+                .data(nodes)
+                .enter().append("circle")
+                .attr("r", 10)
+                .attr("fill", d => d.type === 'switch' ? "blue" : "green");
+
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+            });
+        });
+    </script>
+</body>
+</html>

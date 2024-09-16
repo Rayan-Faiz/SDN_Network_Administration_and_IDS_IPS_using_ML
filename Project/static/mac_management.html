@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MAC Address Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script>
         async function blockHost() {
             const mac = document.getElementById('blockMac').value;
@@ -36,22 +37,50 @@
     </script>
 </head>
 <body>
-    <h1>MAC Address Management</h1>
-    <div>
-        <h2>Block MAC Address</h2>
-        <input type="text" id="blockMac" placeholder="MAC address to block">
-        <button onclick="blockHost()">Block</button>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">MAC Address Management</h1>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h4">Block MAC Address</h2>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" id="blockMac" class="form-control" placeholder="MAC address to block">
+                    <div class="input-group-append">
+                        <button class="btn btn-danger" onclick="blockHost()">Block</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h4">Unblock MAC Address</h2>
+            </div>
+            <div class="card-body">
+                <div class="input-group mb-3">
+                    <input type="text" id="unblockMac" class="form-control" placeholder="MAC address to unblock">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" onclick="unblockHost()">Unblock</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2 class="h4">Blocked MAC Addresses</h2>
+            </div>
+            <div class="card-body">
+                <button class="btn btn-primary mb-3" onclick="listBlockedHosts()">List Blocked MAC Addresses</button>
+                <div id="blockedList" class="border p-3"></div>
+            </div>
+        </div>
     </div>
-    <div>
-        <h2>Unblock MAC Address</h2>
-        <input type="text" id="unblockMac" placeholder="MAC address to unblock">
-        <button onclick="unblockHost()">Unblock</button>
-    </div>
-    <div>
-        <h2>Blocked MAC Addresses</h2>
-        <button onclick="listBlockedHosts()">List Blocked MAC Addresses</button>
-        <div id="blockedList"></div>
-    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-
