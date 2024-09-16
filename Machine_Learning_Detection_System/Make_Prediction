@@ -1,0 +1,58 @@
+import pandas as pd
+import torch
+from torch import nn
+from sklearn.preprocessing import StandardScaler
+import joblib
+
+# Define the SVM class (same structure as used during training)
+class SVM(nn.Module):
+    def __init__(self, input_dim):
+        super(SVM, self).__init__()
+        self.fc = nn.Linear(input_dim, 2)
+        
+    def forward(self, x):
+        return self.fc(x)
+
+# Step 1: Load the saved scaler (pretrained during training)
+scaler = joblib.load('scaler.pkl')  # Assuming you saved the scaler after training
+
+# Step 2: Load the new dataset (keeping the IP addresses)
+df_new = pd.read_csv('new_data.csv')
+
+# Keep the IP columns
+ip_columns = df_new[['Src IP', 'Dst IP', 'Label']]
+
+# Drop non-numerical columns (except IPs to keep them for later)
+df_processed = df_new.drop(columns=['Flow ID', 'Src IP', 'Dst IP', 'Timestamp', 'Label'])
+
+# Step 3: Apply the saved scaler to the new data
+X_new = scaler.transform(df_processed)
+
+# Convert the new data into a PyTorch tensor
+X_new = torch.tensor(X_new, dtype=torch.float32)
+
+# Step 4: Load the trained model
+input_dim = X_new.shape[1]  # Number of input features
+loaded_model = SVM(input_dim=input_dim)
+loaded_model.load_state_dict(torch.load('svm_model.pth'))  # Load saved model
+loaded_model.eval()
+
+# Step 5: Make predictions
+with torch.no_grad():
+    predictions = loaded_model(X_new)
+    predicted_labels = torch.argmax(predictions, dim=1).numpy()
+
+# Step 6: Convert numerical labels to 'Normal' or 'Attack'
+label_mapping = {0: 'Normal', 1: 'Attack'}
+predicted_labels = [label_mapping[label] for label in predicted_labels]
+
+# Step 7: Add predictions to the original dataframe (with IPs)
+df_new['Predicted Label'] = predicted_labels
+
+# Combine IP addresses with predicted labels
+df_final = pd.concat([ip_columns, df_new[['Predicted Label']]], axis=1)
+
+# Step 8: Save the result to a new CSV file
+df_final.to_csv('new_data_with_predictions.csv', index=False)
+
+print("Predictions saved to new_data_with_predictions.csv")
