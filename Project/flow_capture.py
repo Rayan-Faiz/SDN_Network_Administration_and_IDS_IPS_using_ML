@@ -8,9 +8,9 @@ import numpy as np
 
 # Define your SSH and tcpdump parameters
 remote_host = '192.168.1.42'
-remote_user = 'rayan'
-remote_password = 'rayan'
-remote_pcap_file = '/home/rayan/capture.pcap'
+remote_user = 'mininet'
+remote_password = 'mininet'
+remote_pcap_file = '/home/mininet/capture.pcap'
 local_pcap_file = 'capture.pcap'
 packet_count = 100
 
