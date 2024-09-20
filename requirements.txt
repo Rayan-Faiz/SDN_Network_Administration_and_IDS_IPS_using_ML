@@ -1,0 +1,10 @@
+Flask==2.3.2
+scikit-learn==1.2.2
+torch==2.0.1
+numpy==1.24.3
+pandas==2.0.3
+matplotlib==3.7.1
+Poetry==1.5.1
+mininet==2.3.0
+ryu==4.34
+tcpdump==4.9.3
