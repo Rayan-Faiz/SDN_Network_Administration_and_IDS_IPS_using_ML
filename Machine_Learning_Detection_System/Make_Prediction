@@ -19,11 +19,11 @@ scaler = joblib.load('scaler.pkl')  # Assuming you saved the scaler after traini
 # Step 2: Load the new dataset (keeping the IP addresses)
 df_new = pd.read_csv('new_data.csv')
 
-# Keep the IP columns
-ip_columns = df_new[['Src IP', 'Dst IP', 'Label']]
+# Keep the IP columns for later
+ip_columns = df_new[['Src IP', 'Dst IP']]
 
-# Drop non-numerical columns (except IPs to keep them for later)
-df_processed = df_new.drop(columns=['Flow ID', 'Src IP', 'Dst IP', 'Timestamp', 'Label'])
+# Drop non-numerical columns (except IPs)
+df_processed = df_new.drop(columns=['Flow ID', 'Src IP', 'Dst IP', 'Timestamp'])
 
 # Step 3: Apply the saved scaler to the new data
 X_new = scaler.transform(df_processed)
@@ -46,13 +46,10 @@ with torch.no_grad():
 label_mapping = {0: 'Normal', 1: 'Attack'}
 predicted_labels = [label_mapping[label] for label in predicted_labels]
 
-# Step 7: Add predictions to the original dataframe (with IPs)
+# Step 7: Add predictions to the original dataframe
 df_new['Predicted Label'] = predicted_labels
 
-# Combine IP addresses with predicted labels
-df_final = pd.concat([ip_columns, df_new[['Predicted Label']]], axis=1)
-
-# Step 8: Save the result to a new CSV file
-df_final.to_csv('new_data_with_predictions.csv', index=False)
+# Step 8: Save the result to a new CSV file with all the original columns and the predicted label
+df_new.to_csv('new_data_with_predictions.csv', index=False)
 
 print("Predictions saved to new_data_with_predictions.csv")
