@@ -1,4 +1,4 @@
-# SDN Network Traffic Management & Attack Detection using Ryu and SVM
+# SDN Network Traffic Management & Attack Detection and Prevention using Ryu and SVM
 
 ## Project Overview
 This project simulates a Software-Defined Network (SDN) using Mininet and Ryu, combined with an attack detection system using a Support Vector Machine (SVM) model. The system dynamically manages network traffic and detects security threats based on real-time network flows.
