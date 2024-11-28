@@ -15,6 +15,7 @@ df2 = pd.read_csv('OVS.csv')
 df_combined = pd.concat([df1, df2], ignore_index=True)
 
 # Step 2: Preprocess the data
+# Turn label into binary & drops string features
 df_combined = df_combined.drop(columns=['Flow ID', 'Src IP', 'Dst IP', 'Timestamp'])
 df_combined['Label'] = df_combined['Label'].apply(lambda x: 0 if x == 'Normal' else 1)
 df_combined = df_combined.dropna()
